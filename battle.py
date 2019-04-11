@@ -7,6 +7,7 @@ class Pokemon(object):
     def __init__(self, name, hitpoints=100, moves=[]):
         self._name = name
         self._hitpoints = hitpoints
+        self._max_hp = hitpoints
         # self._moves = []
 
     @property
@@ -16,6 +17,14 @@ class Pokemon(object):
     @property
     def hitpoints(self):
         return self._hitpoints
+
+    @property
+    def max_hp(self):
+        return self._max_hp
+
+    @property
+    def percent_hp(self):
+        return int(self._hitpoints / self._max_hp * 100)
 
     # @property
     # def moves(self):
@@ -120,18 +129,18 @@ def main():
 
         auto = True
         if auto:
-            if actor.hitpoints > 90:
+            if actor.percent_hp > 90:
                 random_index = choice([0, 1])
-            elif actor.hitpoints < 35:
+            elif actor.percent_hp < 35:
                 random_index = choice([0, 1, 2])
             else:
                 random_index = choice([0] * 2 + [1] * 2 + [2] * 6)
             picked_move = moves[random_index]
         else:
             if actor == computer:
-                if actor.hitpoints > 90:
+                if actor.percent_hp > 90:
                     random_index = choice([0, 1])
-                elif actor.hitpoints < 35:
+                elif actor.percent_hp < 35:
                     random_index = choice([0, 1, 2])
                 else:
                     random_index = choice([0] * 2 + [1] * 2 + [2] * 6)
