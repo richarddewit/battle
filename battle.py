@@ -8,7 +8,11 @@ class Pokemon(object):
         self._name = name
         self._hitpoints = hitpoints
         self._max_hp = hitpoints
-        # self._moves = []
+        self._moves = []
+
+        for move in moves:
+            move.learn_to(self)
+            self._moves.append(move)
 
     @property
     def name(self):
@@ -26,12 +30,9 @@ class Pokemon(object):
     def percent_hp(self):
         return int(self._hitpoints / self._max_hp * 100)
 
-    # @property
-    # def moves(self):
-    #     return self._moves
-
-    # def add_move(self, name, hp_range):
-    #     self._moves.append(Move(name, hp_range))
+    @property
+    def moves(self):
+        return self._moves
 
     def update_hp(self, amount):
         new_value = self._hitpoints - amount
@@ -47,20 +48,23 @@ class Move(object):
     def name(self):
         return self._name
 
-    def execute(self, actor, target=None):
+    def execute(self, target=None):
         raise NotImplementedError
 
     def calculate_hp(self):
         (min_hp, max_hp) = self._hp_range
         return randint(min_hp, max_hp)
 
+    def learn_to(self, actor):
+        self._actor = actor
+
 
 class AttackingMove(Move):
-    def execute(self, actor, target):
+    def execute(self, target):
         damage = self.calculate_hp()
 
         print("{actor}'s {move} does {damage} damage to {target}".format(
-            actor=actor.name,
+            actor=self._actor.name,
             move=self.name,
             damage=damage,
             target=target.name,
@@ -69,15 +73,15 @@ class AttackingMove(Move):
 
 
 class HealingMove(Move):
-    def execute(self, actor):
+    def execute(self):
         amount = self.calculate_hp()
 
         print("{actor}'s {move} heals {amount} hitpoints".format(
-            actor=actor.name,
+            actor=self._actor.name,
             move=self.name,
             amount=amount,
         ))
-        actor.update_hp(amount * -1)
+        self._actor.update_hp(amount * -1)
 
 # class Game(object):
 #     _player = None
@@ -94,13 +98,16 @@ class HealingMove(Move):
 
 
 def main():
-    player = Pokemon('Feraligatr', 100)
-    computer = Pokemon('Exeggutor', 100)
-    moves = [
-        AttackingMove('Tackle', (18, 25)),
-        AttackingMove('Body Slam', (10, 35)),
-        HealingMove('Heal', (18, 25)),
-    ]
+    player = Pokemon('Player', 100, [
+        AttackingMove('Punch', (18, 25)),
+        AttackingMove('Kick', (10, 35)),
+        HealingMove('Eat Candybar', (18, 25)),
+    ])
+    computer = Pokemon('Computer', 100, [
+        AttackingMove('Bleep', (18, 25)),
+        AttackingMove('Throw Error', (10, 35)),
+        HealingMove('Defragment', (18, 25)),
+    ])
 
     actor = player
     target = computer
@@ -130,7 +137,7 @@ def main():
                 random_index = choice([0, 1, 2])
             else:
                 random_index = choice([0] * 2 + [1] * 2 + [2] * 6)
-            picked_move = moves[random_index]
+            picked_move = actor.moves[random_index]
         else:
             if actor == computer:
                 if actor.percent_hp > 90:
@@ -139,26 +146,26 @@ def main():
                     random_index = choice([0, 1, 2])
                 else:
                     random_index = choice([0] * 2 + [1] * 2 + [2] * 6)
-                picked_move = moves[random_index]
+                picked_move = actor.moves[random_index]
             else:
                 print("It's your turn, pick a move!")
                 picked_move = None
                 while picked_move == None:
-                    for ix, move in enumerate(moves):
+                    for ix, move in enumerate(actor.moves):
                         print("{index}: {move}".format(
                             index=ix + 1,
                             move=move.name))
                     i = input("Enter number: ")
                     try:
-                        picked_move = moves[int(i) - 1]
+                        picked_move = actor.moves[int(i) - 1]
                     except:
                         print("Invalid choice")
                         print()
 
         if picked_move.__class__ == HealingMove:
-            picked_move.execute(actor)
+            picked_move.execute()
         else:
-            picked_move.execute(actor, target)
+            picked_move.execute(target)
 
         # Swap turns
         actor, target = target, actor
