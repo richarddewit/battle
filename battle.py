@@ -30,59 +30,54 @@ class Pokemon(object):
     # def moves(self):
     #     return self._moves
 
-    # def add_move(self, name, damage_range):
-    #     self._moves.append(Move(name, damage_range))
+    # def add_move(self, name, hp_range):
+    #     self._moves.append(Move(name, hp_range))
 
-    def take_damage(self, amount):
-        self._hitpoints -= amount
-        if self._hitpoints < 0:
-            self._hitpoints = 0
-        elif self._hitpoints > 100:
-            self._hitpoints = 100
+    def update_hp(self, amount):
+        new_value = self._hitpoints - amount
+        self._hitpoints = min(100, max(0, new_value))
 
 
 class Move(object):
-    def __init__(self, name, damage_range, heal=False):
+    def __init__(self, name, hp_range):
         self._name = name
-        self._damage_range = damage_range
-        self._is_heal = heal
+        self._hp_range = hp_range
 
     @property
     def name(self):
         return self._name
 
-    @property
-    def is_heal(self):
-        return self._is_heal
-
     def execute(self, actor, target=None):
-        damage = self.calculate_damage()
-        if self._is_heal:
-            self.heal(damage, actor)
-        else:
-            self.deal_damage(damage, actor, target)
+        raise NotImplementedError
 
-    def deal_damage(self, damage, actor, target):
+    def calculate_hp(self):
+        (min_hp, max_hp) = self._hp_range
+        return randint(min_hp, max_hp)
+
+
+class AttackingMove(Move):
+    def execute(self, actor, target):
+        damage = self.calculate_hp()
+
         print("{actor}'s {move} does {damage} damage to {target}".format(
             actor=actor.name,
             move=self.name,
             damage=damage,
             target=target.name,
         ))
-        target.take_damage(damage)
+        target.update_hp(damage)
 
-    def heal(self, amount, actor):
-        print("{actor}'s {move} heals {amount} damage".format(
+
+class HealingMove(Move):
+    def execute(self, actor):
+        amount = self.calculate_hp()
+
+        print("{actor}'s {move} heals {amount} hitpoints".format(
             actor=actor.name,
             move=self.name,
             amount=amount,
         ))
-        actor.take_damage(amount * -1)
-
-    def calculate_damage(self):
-        (min_damage, max_damage) = self._damage_range
-        return randint(min_damage, max_damage)
-
+        actor.update_hp(amount * -1)
 
 # class Game(object):
 #     _player = None
@@ -102,9 +97,9 @@ def main():
     player = Pokemon('Feraligatr', 100)
     computer = Pokemon('Exeggutor', 100)
     moves = [
-        Move('Tackle', (18, 25)),
-        Move('Body Slam', (10, 35)),
-        Move('Heal', (18, 25), heal=True),
+        AttackingMove('Tackle', (18, 25)),
+        AttackingMove('Body Slam', (10, 35)),
+        HealingMove('Heal', (18, 25)),
     ]
 
     actor = player
@@ -160,7 +155,10 @@ def main():
                         print("Invalid choice")
                         print()
 
-        picked_move.execute(actor, target)
+        if picked_move.__class__ == HealingMove:
+            picked_move.execute(actor)
+        else:
+            picked_move.execute(actor, target)
 
         # Swap turns
         actor, target = target, actor
