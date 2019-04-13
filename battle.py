@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 import math
-from os import RWF_HIPRI
 from random import choice, randint
-from threading import active_count
 
 
 class Pokemon(object):
