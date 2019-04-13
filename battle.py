@@ -3,7 +3,7 @@ import math
 from random import choice, randint
 
 
-class Pokemon(object):
+class Character(object):
     def __init__(self, name, hitpoints=100, moves=[]):
         self._name = name
         self._hitpoints = hitpoints
@@ -161,12 +161,12 @@ class Game(object):
 
 
 def main():
-    player = Pokemon('Player', 100, [
+    player = Character('Player', 100, [
         AttackingMove('Punch', (18, 25)),
         AttackingMove('Kick', (10, 35)),
         HealingMove('Eat Candybar', (18, 25)),
     ])
-    computer = Pokemon('Computer', 100, [
+    computer = Character('Computer', 100, [
         AttackingMove('Bleep', (18, 25)),
         AttackingMove('Throw Error', (10, 35)),
         HealingMove('Defragment', (18, 25)),
