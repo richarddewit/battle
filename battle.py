@@ -59,7 +59,7 @@ class Move(object):
         self._actor = actor
 
 
-class AttackingMove(Move):
+class DamagingMove(Move):
     def execute(self, target):
         damage = self.calculate_hp()
 
@@ -184,13 +184,13 @@ class Game(object):
 
 def main():
     player = Character('Player', 100, [
-        AttackingMove('Punch', (18, 25)),
-        AttackingMove('Kick', (10, 35)),
+        DamagingMove('Punch', (18, 25)),
+        DamagingMove('Kick', (10, 35)),
         HealingMove('Eat Candybar', (18, 25)),
     ])
     computer = Character('Computer', 100, [
-        AttackingMove('Bleep', (18, 25)),
-        AttackingMove('Throw Error', (10, 35)),
+        DamagingMove('Bleep', (18, 25)),
+        DamagingMove('Throw Error', (10, 35)),
         HealingMove('Defragment', (18, 25)),
     ])
     game = Game(player, computer)
