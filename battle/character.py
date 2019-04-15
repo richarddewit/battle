@@ -31,4 +31,4 @@ class Character(object):
 
     def update_hp(self, amount):
         new_value = self._hitpoints - amount
-        self._hitpoints = min(100, max(0, new_value))
+        self._hitpoints = min(self._max_hp, max(0, new_value))
