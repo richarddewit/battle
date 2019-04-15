@@ -11,6 +11,12 @@ cd battle
 ./run.py --auto
 ```
 
+## TODO
+
+- [x] Make "auto-combat" a cli-flag instead of a hardcoded boolean
+- [ ] Separate messages into `Message` class
+- [ ] Generalize random move selection, is now hardcoded into indexes (`[0, 1]` and `[0, 1, 2]` instead of checking which move is a `HealingMove`)
+
 ## The Project
 ### GOAL
 
@@ -27,9 +33,3 @@ After each move, a **message** should be printed out that tells the user what ju
 1. When someone is defeated, make sure the game prints out that their health has reached 0, and not a negative number. 
 2. When the computer's health reaches a set amount (such as 35%), increase it's chance to cast heal. 
 3. Give each move a name.
-
-## TODO
-
-- [x] Make "auto-combat" a cli-flag instead of a hardcoded boolean
-- [ ] Separate messages into `Message` class
-- [ ] Generalize random move selection, is now hardcoded into indexes ([0, 1] and [0, 1, 2] instead of checking which move is a `HealingMove`)
