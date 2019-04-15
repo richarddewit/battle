@@ -1,10 +1,17 @@
 #!/usr/bin/env python3
+import argparse
+
 from battle.character import Character
 from battle.moves import DamagingMove, HealingMove
 from battle.game import Game
 
 
 def main():
+    parser = argparse.ArgumentParser(description='Turn-based battle game')
+    parser.add_argument('--auto', action='store_true',
+                        help='Automatically chose moves')
+    args = parser.parse_args()
+
     player = Character('Player', 100, [
         DamagingMove('Punch', (18, 25)),
         DamagingMove('Kick', (10, 35)),
@@ -22,8 +29,7 @@ def main():
     while not game.ended:
         game.print_game_status()
 
-        auto = True
-        if auto or game.is_computers_turn:
+        if args.auto or game.is_computers_turn:
             game.pick_random_move()
         else:
             print("It's your turn, pick a move!")
